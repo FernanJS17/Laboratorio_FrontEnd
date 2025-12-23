@@ -6,6 +6,8 @@ Este es el FrontEnd del proyecto de Laboratorio. Es una app para manejar posts, 
 
 ---
 Angular V18.2.21
+---
+---
 Node.js v20.19.6
 ---
 TypeScript
