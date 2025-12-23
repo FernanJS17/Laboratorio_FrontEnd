@@ -1,0 +1,60 @@
+<div class="min-h-screen bg-gray-100 py-8">
+  <div class="max-w-2xl mx-auto bg-white rounded-xl shadow p-6">
+
+    <h1 class="text-xl font-bold mb-4">
+      Carga Masiva de Posts
+    </h1>
+    <p class="text-sm text-gray-500">
+        Pega un arreglo JSON con posts válidos (El JSON de ejemplo ya generará 200 registros aleatorios)
+      </p>
+
+    <form [formGroup]="form" class="space-y-4">
+      <textarea
+        class="w-full h-72 border rounded-lg p-3 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+        formControlName="json"
+      ></textarea>
+
+      <div class="flex justify-end gap-3">
+        <button
+          type="button"
+          class="px-4 py-2 border rounded-lg hover:bg-gray-100"
+          (click)="cancel()"
+        >
+          Cancelar
+        </button>
+
+        <button
+          type="button"
+          class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+          [disabled]="form.invalid"
+          (click)="submit()"
+        >
+          Cargar Posts
+        </button>
+      </div>
+    </form>
+
+  </div>
+</div>
+
+<!-- CONFIRM SUBMIT -->
+<app-confirm-modal
+  *ngIf="showConfirmSubmit"
+  title="Confirmar carga masiva"
+  message="Se crearán múltiples posts de una sola vez. ¿Deseas continuar?"
+  confirmText="Sí, cargar"
+  confirmClass="bg-blue-600 hover:bg-blue-700"
+  (confirm)="confirmSubmit()"
+  (cancel)="showConfirmSubmit = false"
+></app-confirm-modal>
+
+<!-- CONFIRM CANCEL -->
+<app-confirm-modal
+  *ngIf="showConfirmCancel"
+  title="Salir sin guardar"
+  message="Tienes cambios sin guardar. ¿Seguro que deseas salir?"
+  confirmText="Salir"
+  confirmClass="bg-red-600 hover:bg-red-700"
+  (confirm)="confirmCancel()"
+  (cancel)="showConfirmCancel = false"
+></app-confirm-modal>

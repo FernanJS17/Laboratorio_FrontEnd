@@ -1,0 +1,41 @@
+    <div class="flex gap-3 mb-4">
+      <!-- Avatar -->
+      <div
+        class="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-semibold"
+      >
+        {{ comment.name[0] | uppercase }}
+      </div>
+
+      <!-- Content -->
+      <div class="flex-1 bg-gray-100 rounded-xl px-4 py-2">
+        <div class="flex justify-between items-center">
+          <span class="font-semibold text-sm">
+            {{ comment.name }}
+          </span>
+
+          <button
+            class="text-xs text-gray-400 hover:text-red-500"
+            (click)="openModal()"
+          >
+            Eliminar
+          </button>
+        </div>
+
+        <p class="text-sm text-gray-700 mt-1">
+          {{ comment.body }}
+        </p>
+
+        <span class="text-xs text-gray-400 mt-1 block">
+          {{ comment.createdAt | formatDate }}
+        </span>
+      </div>
+    </div>
+
+    <!-- CONFIRM MODAL -->
+    <app-confirm-modal
+      *ngIf="showDeleteModal"
+      title="Eliminar comentario"
+      message="Este comentario se eliminará de forma permanente. ¿Deseas continuar?"
+      (confirm)="confirmDelete()"
+      (cancel)="cancelDelete()"
+    ></app-confirm-modal>

@@ -1,0 +1,46 @@
+   <div class="bg-white p-4 rounded-xl shadow mb-4">
+      <h2 class="text-lg font-semibold text-gray-800">
+        {{ post.title }}
+      </h2>
+
+      <p class="text-sm text-gray-500">
+        {{ post.author }} · {{ post.createdAt | formatDate }}
+        <span *ngIf="wasEdited" class="text-xs text-gray-400 ml-1">
+          (Editado)
+        </span>
+      </p>
+
+      <p class="mt-2 text-gray-700 leading-relaxed">
+        {{ post.body | truncate:120 }}
+      </p>
+
+      <div class="flex gap-2 mt-4">
+        <app-button [routerLink]="['/posts', post._id]">
+          Ver
+        </app-button>
+
+        <app-button
+          variant="secondary"
+          [routerLink]="['/posts', post._id, 'edit']"
+        >
+          Editar
+        </app-button>
+
+        <app-button
+          variant="danger"
+          (click)="openDeleteModal()"
+        >
+          Eliminar
+        </app-button>
+      </div>
+    </div>
+
+    <!-- MODAL -->
+    <app-confirm-modal
+      *ngIf="showDeleteModal"
+      title="Eliminar post"
+      [danger]="true"
+      message="¿Estás seguro de que deseas eliminar este post? Esta acción no se puede deshacer."
+      (confirm)="onDeleteConfirmed()"
+      (cancel)="closeDeleteModal()"
+    ></app-confirm-modal>

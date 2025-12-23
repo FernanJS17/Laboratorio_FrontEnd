@@ -7,6 +7,9 @@ import { LoadingDirective } from './directives/loading.directive';
 import { FormatDatePipe } from './pipes/format-date-pipe';
 import { RouterModule } from '@angular/router';
 import { ToastComponent } from './components/toast/toast.component';
+import { ConfirmModalComponent } from './components/modal/confirm-modal.component';
+import { PostSkeletonComponent } from './components/skeleton/post-skeleton.component';
+import { CommentSkeletonComponent } from './components/skeleton/comment-skeleton.component';
 
 @NgModule({
   declarations: [
@@ -14,7 +17,10 @@ import { ToastComponent } from './components/toast/toast.component';
     FormatDatePipe,
     TruncatePipe,
     LoadingDirective,
-    ToastComponent
+    ToastComponent,
+    ConfirmModalComponent,
+    PostSkeletonComponent,
+    CommentSkeletonComponent
   ],
   imports: [
     CommonModule,
@@ -25,7 +31,10 @@ import { ToastComponent } from './components/toast/toast.component';
     FormatDatePipe,
     TruncatePipe,
     LoadingDirective,
-    ToastComponent
+    ToastComponent,
+    ConfirmModalComponent,
+    PostSkeletonComponent,
+    CommentSkeletonComponent
   ]
 })
 export class SharedModule {}

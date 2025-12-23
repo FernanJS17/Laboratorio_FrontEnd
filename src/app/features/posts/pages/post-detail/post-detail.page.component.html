@@ -1,0 +1,94 @@
+<div class="min-h-screen bg-gray-100 py-8">
+  <div *ngIf="post" class="max-w-2xl mx-auto bg-white rounded-xl shadow-sm">
+
+    <!-- HEADER -->
+    <div class="flex justify-between items-start px-6 pt-6">
+      <div>
+        <h1 class="text-2xl font-bold">{{ post.title }}</h1>
+        <p class="text-sm text-gray-500 mt-1">
+          {{ post.author }} · {{ post.createdAt | formatDate }}
+          <span *ngIf="post.updatedAt && post.updatedAt !== post.createdAt" class="text-xs text-gray-400">
+            (Editado)
+          </span>
+        </p>
+      </div>
+
+      <div class="flex gap-2">
+        <button
+          class="flex items-center gap-1 px-3 py-1 text-sm bg-gray-200 hover:bg-gray-300 rounded"
+          (click)="goBack()"
+        >
+          ← Regresar
+        </button>
+
+        <button
+          class="flex items-center gap-1 px-3 py-1 text-sm bg-blue-600 text-white hover:bg-blue-700 rounded"
+          [routerLink]="['/posts', post._id, 'edit']"
+        >
+         ✎ Editar
+        </button>
+
+        <button
+          class="flex items-center gap-1 px-3 py-1 text-sm bg-red-600 text-white hover:bg-red-700 rounded"
+          (click)="deletePost()"
+        >
+          🗑︎ Eliminar
+        </button>
+      </div>
+    </div>
+
+    <!-- BODY -->
+    <div class="px-6 py-4 text-gray-800 leading-relaxed">
+      {{ post.body }}
+    </div>
+
+    <!-- DIVIDER -->
+    <div class="border-t mx-6"></div>
+
+    <!-- COMMENTS -->
+    <div class="px-6 py-4">
+      <h2 class="text-lg font-semibold mb-3">Comentarios</h2>
+
+      <!-- FORM -->
+      <app-comment-form
+        [postId]="post._id"
+        (created)="onCreateComment($event)"
+      ></app-comment-form>
+
+      <!-- LOADING -->
+      <app-comment-skeleton
+        *ngIf="loadingComments"
+        [count]="4"
+        class="mt-4"
+      ></app-comment-skeleton>
+
+
+      <!-- EMPTY -->
+      <div
+        *ngIf="!loadingComments && comments.length === 0"
+        class="text-sm text-gray-400 mt-4"
+      >
+        Sé el primero en comentar 👀
+      </div>
+
+      <!-- COMMENTS LIST -->
+      <div class="space-y-3 mt-4">
+        <app-comment-item
+          *ngFor="let comment of comments"
+          [comment]="comment"
+          (deleted)="onDeleteComment(comment._id)"
+        ></app-comment-item>
+      </div>
+    </div>
+
+    <app-confirm-modal
+    *ngIf="showDeleteModal"
+    [danger]="true"
+    title="Eliminar post"
+    message="Esta acción no se puede deshacer. ¿Deseas continuar?"
+    (confirm)="confirmDelete()"
+    (cancel)="cancelDelete()"
+  ></app-confirm-modal>
+
+  </div>
+</div>

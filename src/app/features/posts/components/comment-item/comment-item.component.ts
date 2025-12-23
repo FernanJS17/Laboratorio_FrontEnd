@@ -3,24 +3,25 @@ import { Comment } from '../../models/comments.model';
 
 @Component({
   selector: 'app-comment-item',
-  template: `
-    <div class="border p-3 rounded flex justify-between">
-      <div>
-        <p class="font-semibold">{{ comment.name }}</p>
-        <p class="text-sm text-gray-500">{{ comment.email }}</p>
-        <p>{{ comment.body }}</p>
-      </div>
-
-      <button
-        class="text-red-500 text-sm"
-        (click)="deleted.emit()"
-      >
-        Eliminar
-      </button>
-    </div>
-  `
+  templateUrl:'./comment-item.component.html'
 })
 export class CommentItemComponent {
+
   @Input() comment!: Comment;
-  @Output() deleted = new EventEmitter<void>();
+  @Output() deleted = new EventEmitter<string>();
+
+  showDeleteModal = false;
+
+  openModal(): void {
+    this.showDeleteModal = true;
+  }
+
+  confirmDelete(): void {
+    this.deleted.emit(this.comment._id);
+    this.showDeleteModal = false;
+  }
+
+  cancelDelete(): void {
+    this.showDeleteModal = false;
+  }
 }

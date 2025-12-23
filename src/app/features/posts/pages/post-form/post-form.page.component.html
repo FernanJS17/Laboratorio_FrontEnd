@@ -1,0 +1,113 @@
+<div class="min-h-screen bg-gray-100 py-10">
+  <div class="max-w-2xl mx-auto bg-white rounded-xl shadow-sm">
+
+    <!-- HEADER -->
+    <div class="px-6 py-4 border-b">
+      <h1 class="text-xl font-semibold">
+        {{ postId ? 'Editar post' : 'Crear post' }}
+      </h1>
+    </div>
+
+    <!-- FORM -->
+    <form
+      [formGroup]="form"
+      (ngSubmit)="openSubmitModal()"
+      class="px-6 py-4 space-y-4"
+    >
+      <!-- TÍTULO -->
+      <div>
+        <input
+          maxlength="100"
+          class="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
+          placeholder="Título"
+          formControlName="title"
+        />
+        <p
+          *ngIf="form.get('title')?.touched && form.get('title')?.invalid"
+          class="text-sm text-red-500 mt-1"
+        >
+          El título es obligatorio (mín. 3 caracteres)
+        </p>
+      </div>
+
+      <!-- BODY -->
+      <div>
+        <textarea
+          maxlength="1200"
+          rows="6"
+          class="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
+          placeholder="¿Qué quieres compartir?"
+          formControlName="body"
+        ></textarea>
+        <p
+          *ngIf="form.get('body')?.touched && form.get('body')?.invalid"
+          class="text-sm text-red-500 mt-1"
+        >
+          El contenido es obligatorio (mín. 10 caracteres)
+        </p>
+      </div>
+
+      <!-- AUTHOR -->
+      <div>
+        <input
+          maxlength="50"
+          class="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
+          placeholder="Autor"
+          formControlName="author"
+        />
+        <p
+          *ngIf="form.get('author')?.touched && form.get('author')?.invalid"
+          class="text-sm text-red-500 mt-1"
+        >
+          El autor es obligatorio
+        </p>
+      </div>
+
+      <!-- ACTIONS -->
+      <div class="flex justify-end gap-3 pt-4 border-t">
+        <button
+          type="button"
+          class="px-4 py-2 rounded-lg border text-gray-600 hover:bg-gray-100"
+          (click)="cancel()"
+        >
+          Cancelar
+        </button>
+
+        <button
+          type="submit"
+          [disabled]="form.invalid"
+          class="px-6 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50"
+        >
+          {{ postId ? 'Guardar cambios' : 'Publicar' }}
+        </button>
+      </div>
+    </form>
+
+    <app-confirm-modal
+      *ngIf="showSubmitModal"
+      [title]="postId ? 'Guardar cambios' : 'Publicar post'"
+      [message]="
+        postId
+          ? '¿Deseas guardar los cambios realizados en este post?'
+          : '¿Deseas publicar este post?'
+      "
+      confirmText="Confirmar"
+      cancelText="Cancelar"
+      (confirm)="confirmSubmit()"
+      (cancel)="showSubmitModal = false"
+    ></app-confirm-modal>
+
+
+    <app-confirm-modal
+    *ngIf="showCancelModal"
+    title="Salir sin guardar"
+    message="Tienes cambios sin guardar. Si sales ahora, se perderán."
+    confirmText="Salir"
+    [danger]="true"
+    cancelText="Seguir editando"
+    (confirm)="confirmCancel()"
+    (cancel)="showCancelModal = false"
+  ></app-confirm-modal>
+
+  </div>
+</div>

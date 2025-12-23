@@ -1,0 +1,32 @@
+    <form
+      [formGroup]="form"
+      (ngSubmit)="submit()"
+      class="flex gap-3 items-start mt-4"
+    >
+      <!-- Avatar -->
+      <div
+        class="w-10 h-10 rounded-full bg-gray-400 text-white flex items-center justify-center font-semibold"
+      >
+        U
+      </div>
+
+      <!-- Input -->
+      <div class="flex-1 relative">
+        <textarea
+          rows="1"
+          maxlength="200"
+          formControlName="body"
+          placeholder="Escribe un comentario..."
+          class="w-full resize-none rounded-full border px-4 py-2 pr-12 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        ></textarea>
+
+        <!-- Send button -->
+        <button
+          type="submit"
+          [disabled]="form.invalid"
+          class="absolute right-2 top-1/2 -translate-y-1/2 text-blue-600 disabled:text-gray-300"
+        >
+          ➤
+        </button>
+      </div>
+    </form>

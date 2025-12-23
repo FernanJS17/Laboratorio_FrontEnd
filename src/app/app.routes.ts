@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 
-import { PostsListPageComponent } from './features/posts/pages/post-list/post.list.page';
+import { PostsListPageComponent } from './features/posts/pages/post-list/post-list.page';
 import { PostDetailPageComponent } from './features/posts/pages/post-detail/post-detail.page';
 import { PostFormPageComponent } from './features/posts/pages/post-form/post-form.page';
 import { PostsBulkPageComponent } from './features/posts/pages/post-bulk/post-bulk.page';

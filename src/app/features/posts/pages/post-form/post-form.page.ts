@@ -2,59 +2,36 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PostsService } from '../../services/posts.service';
+import { ToastService } from '../../../../core/services/toast.service';
+
 
 @Component({
   selector: 'app-post-form-page',
-  template: `
-    <form
-      [formGroup]="form"
-      (ngSubmit)="onSubmit()"
-      class="p-6 space-y-4"
-    >
-      <input
-        class="border p-2 w-full"
-        placeholder="Título"
-        formControlName="title"
-      />
-
-      <textarea
-        class="border p-2 w-full"
-        placeholder="Contenido"
-        rows="5"
-        formControlName="body"
-      ></textarea>
-
-      <input
-        class="border p-2 w-full"
-        placeholder="Autor"
-        formControlName="author"
-      />
-
-      <app-button type="submit" [disabled]="form.invalid">
-        Guardar
-      </app-button>
-    </form>
-  `
+  templateUrl: './post-form.page.component.html'
 })
 export class PostFormPageComponent implements OnInit {
 
 
-  private postId?: string;
+  postId?: string;
   form!: FormGroup;
+
+  showCancelModal = false;
+  showSubmitModal = false;
 
   constructor(
     private fb: FormBuilder,
     private postsService: PostsService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private toast: ToastService
   ) {}
 
   ngOnInit(): void {
 
     this.form = this.fb.group({
-      title: ['', [Validators.required, Validators.minLength(3)]],
-      body: ['', [Validators.required, Validators.minLength(10)]],
-      author: ['', Validators.required]
+      title: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
+      body: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(1200)]],
+      author: ['', [Validators.required, Validators.maxLength(50)]]
     });
 
     this.postId = this.route.snapshot.paramMap.get('id') ?? undefined;
@@ -66,6 +43,30 @@ export class PostFormPageComponent implements OnInit {
     }
   }
 
+    cancel(): void {
+      if (this.form.dirty) {
+        this.showCancelModal = true;
+        return;
+      }
+
+      this.router.navigate(['/posts']);
+    }
+
+    confirmCancel(): void {
+      this.showCancelModal = false;
+      this.router.navigate(['/posts']);
+    }
+
+    openSubmitModal(): void {
+      if (this.form.invalid) return;
+      this.showSubmitModal = true;
+    }
+
+    confirmSubmit(): void {
+      this.showSubmitModal = false;
+      this.onSubmit();
+    }
+
   onSubmit(): void {
     if (this.form.invalid) return;
 
@@ -74,6 +75,13 @@ export class PostFormPageComponent implements OnInit {
       : this.postsService.create(this.form.value as any);
 
     request$.subscribe(() => {
+      this.toast.show(
+        this.postId
+          ? 'Post actualizado correctamente'
+          : 'Post creado correctamente',
+          'success'
+      );
+
       this.router.navigate(['/posts']);
     });
   }

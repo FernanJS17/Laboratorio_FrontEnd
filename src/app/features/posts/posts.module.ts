@@ -4,7 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { SharedModule } from '../../shared/shared.module';
 
-import { PostsListPageComponent } from './pages/post-list/post.list.page';
+import { PostsListPageComponent } from './pages/post-list/post-list.page';
 import { PostDetailPageComponent } from './pages/post-detail/post-detail.page';
 import { PostFormPageComponent } from './pages/post-form/post-form.page';
 import { PostCardComponent } from './components/posts-card/posts-card-component';

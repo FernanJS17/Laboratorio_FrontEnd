@@ -1,71 +1,115 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { PostsService } from '../../services/posts.service';
 import { ToastService } from '../../../../core/services/toast.service';
+import { Router } from '@angular/router';
 import { Post } from '../../models/posts.model';
+import { generateBulkPosts } from '../../../../core/utils/bulk-post-generator';
 
 @Component({
   selector: 'app-posts-bulk-page',
-  template: `
-    <div class="p-6 max-w-2xl mx-auto">
-      <h1 class="text-xl font-bold mb-4">Carga Masiva de Posts</h1>
-
-      <form [formGroup]="form" (ngSubmit)="submit()">
-        <textarea
-          class="w-full h-64 border rounded p-2 font-mono text-sm"
-
-          formControlName="json"
-        ></textarea>
-
-        <div
-          *ngIf="form.invalid && form.touched"
-          class="text-red-500 text-sm mt-2"
-        >
-          JSON requerido
-        </div>
-
-        <button
-          type="submit"
-          [disabled]="form.invalid"
-          class="mt-4 bg-blue-600 text-white px-4 py-2 rounded disabled:opacity-50"
-        >
-          Cargar Posts
-        </button>
-      </form>
-    </div>
-  `
+  templateUrl: './post-bulk.page.component.html'
 })
-export class PostsBulkPageComponent {
+export class PostsBulkPageComponent implements OnInit {
 
-  form: FormGroup;
+  form!: FormGroup;
+
+  showConfirmSubmit = false;
+  showConfirmCancel = false;
 
   constructor(
     private fb: FormBuilder,
     private postsService: PostsService,
-    private toast: ToastService
-  ) {
+    private toast: ToastService,
+    private router: Router
+  ) {}
+
+  ngOnInit(): void {
     this.form = this.fb.group({
-      json: ['', Validators.required]
+      json: [
+        JSON.stringify(generateBulkPosts(), null, 2),
+        Validators.required
+      ]
     });
   }
 
   submit(): void {
     if (this.form.invalid) return;
+    this.showConfirmSubmit = true;
+  }
 
-    let postsArray: Partial<Post>[];
+  confirmSubmit(): void {
+    this.showConfirmSubmit = false;
+
+    let parsed: unknown;
 
     try {
-      postsArray = JSON.parse(this.form.value.json);
-      if (!Array.isArray(postsArray)) throw new Error('Debe ser un array');
-    } catch (e:any) {
-      alert('JSON inválido: ' + e.message);
+      parsed = JSON.parse(this.form.value.json);
+    } catch {
+      this.toast.show('JSON inválido', 'error');
       return;
     }
 
-    this.postsService.bulkCreate(postsArray).subscribe(() => {
-      this.toast.show('Posts cargados correctamente');
-      this.form.reset();
+    if (!this.isValidPostsArray(parsed)) {
+      this.toast.show(
+        'La estructura del JSON no es válida. Verifica title, body y author.',
+        'error'
+      );
+      return;
+    }
+
+    this.postsService.bulkCreate(parsed).subscribe({
+      next: () => {
+        this.toast.show(
+          'Posts cargados correctamente',
+          'success'
+        );
+        this.router.navigate(['/posts']);
+      },
+      error: (err) => {
+        // console.error(err);
+
+        if (err.status === 500) {
+          this.toast.show(
+            'La carga masiva es demasiado grande. Intenta con menos registros.',
+            'error'
+          );
+          return;
+        }
+
+        this.toast.show(
+          'Ocurrió un error inesperado al cargar los posts.',
+          'error'
+        );
+      }
     });
+
   }
 
+  cancel(): void {
+    if (!this.form.dirty) {
+      this.router.navigate(['/posts']);
+      return;
+    }
+
+    this.showConfirmCancel = true;
+  }
+
+  confirmCancel(): void {
+    this.showConfirmCancel = false;
+    this.router.navigate(['/posts']);
+  }
+
+  private isValidPostsArray(data: any): data is Partial<Post>[] {
+    if (!Array.isArray(data)) return false;
+
+    return data.every(item =>
+      typeof item.title === 'string' &&
+      item.title.trim().length >= 3 &&
+      typeof item.body === 'string' &&
+      item.body.trim().length >= 10 &&
+      typeof item.author === 'string' &&
+      item.author.trim().length > 0
+    );
+  }
 }

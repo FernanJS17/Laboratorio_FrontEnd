@@ -1,0 +1,86 @@
+    <div class="min-h-screen bg-gray-100 py-8">
+
+      <!-- FEED -->
+      <div class="max-w-2xl mx-auto px-4">
+
+        <!-- HEADER -->
+        <div class="bg-white rounded-xl shadow-sm p-4 mb-6">
+          <div class="flex justify-between items-center">
+            <h1 class="text-xl font-bold text-gray-800">Posts</h1>
+
+            <div class="flex gap-2">
+              <button
+                routerLink="/posts/bulk"
+                class="px-3 py-2 text-sm bg-red-100 text-red-600 rounded hover:bg-red-200 transition"
+              >
+                Carga masiva
+              </button>
+
+              <button
+                routerLink="/posts/create"
+                class="px-4 py-2 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+              >
+                Crear nuevo post
+              </button>
+            </div>
+          </div>
+
+          <!-- SEARCH -->
+          <div class="mt-4">
+            <input
+              type="text"
+              placeholder="Buscar por título..."
+              class="w-full px-4 py-2 border rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              (input)="search.set($any($event.target).value)"
+            />
+          </div>
+        </div>
+
+        <!-- LOADING -->
+        <div *ngIf="postsService.loading()" class="space-y-4">
+          <app-post-skeleton *ngFor="let i of [1,2,3,4,5]"></app-post-skeleton>
+        </div>
+
+
+        <!-- EMPTY -->
+        <div
+          *ngIf="!postsService.loading() && filteredPosts().length === 0"
+          class="text-center text-gray-400 py-6 bg-white rounded-xl shadow-sm"
+        >
+          No hay posts disponibles
+        </div>
+
+        <!-- POSTS -->
+        <div class="space-y-4">
+        <app-post-card
+          *ngFor="let post of filteredPosts()"
+          [post]="post"
+          (deleted)="onPostDeleted()"
+        ></app-post-card>
+        </div>
+
+        <!-- PAGINATION -->
+        <div class="flex justify-between items-center mt-6 px-2">
+          <button
+            class="px-4 py-2 text-sm rounded bg-white shadow disabled:opacity-40"
+            (click)="prev()"
+            [disabled]="page() === 1"
+          >
+            ← Anterior
+          </button>
+
+          <span class="text-sm text-gray-600">
+            Página {{ page() }} de {{ postsService.totalPages() }}
+          </span>
+
+          <button
+            class="px-4 py-2 text-sm rounded bg-white shadow disabled:opacity-40"
+            (click)="next()"
+            [disabled]="page() >= postsService.totalPages()"
+          >
+            Siguiente →
+          </button>
+        </div>
+
+      </div>
+    </div>

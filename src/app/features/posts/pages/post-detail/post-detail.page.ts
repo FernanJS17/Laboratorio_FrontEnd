@@ -4,42 +4,11 @@ import { PostsService } from '../../services/posts.service';
 import { CommentsService } from '../../services/comments.service';
 import { Comment } from '../../models/comments.model';
 import { Post } from '../../models/posts.model';
+import { ToastService } from '../../../../core/services/toast.service';
 
 @Component({
   selector: 'app-post-detail-page',
-  template: `
-    <div class="p-6" *ngIf="post">
-      <h1 class="text-2xl font-bold mb-2">{{ post.title }}</h1>
-      <p class="text-gray-500 mb-4">
-        {{ post.author }} · {{ post.createdAt | formatDate }}
-      </p>
-
-      <p class="mb-6">{{ post.body }}</p>
-
-      <h2 class="text-xl font-semibold mb-2">Comentarios</h2>
-
-      <app-comment-form
-        [postId]="post._id"
-        (created)="onCreateComment($event)"
-      ></app-comment-form>
-
-      <div *ngIf="loadingComments" class="text-gray-500 mt-4">
-        Cargando comentarios...
-      </div>
-
-      <div *ngIf="!loadingComments && comments.length === 0" class="text-gray-400 mt-4">
-        No hay comentarios aún
-      </div>
-
-      <div class="space-y-2 mt-4">
-        <app-comment-item
-          *ngFor="let comment of comments"
-          [comment]="comment"
-          (deleted)="onDeleteComment(comment._id)"
-        ></app-comment-item>
-      </div>
-    </div>
-  `
+  templateUrl: './post-detail.page.component.html'
 })
 export class PostDetailPageComponent implements OnInit {
 
@@ -47,15 +16,13 @@ export class PostDetailPageComponent implements OnInit {
   comments: Comment[] = [];
   loadingComments = false;
 
+  showDeleteModal = false;
 
   constructor(
     private route: ActivatedRoute,
-
-    @Inject(PostsService)
     private postsService: PostsService,
-
-    @Inject(CommentsService)
-    private commentsService: CommentsService
+    private commentsService: CommentsService,
+    private toast: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -73,7 +40,6 @@ export class PostDetailPageComponent implements OnInit {
   private loadComments(postId: string): void {
     this.commentsService.getByPost(postId).subscribe(comments => {
       this.comments = comments;
-      console.log(comments);
     });
   }
 
@@ -84,12 +50,41 @@ export class PostDetailPageComponent implements OnInit {
   }
 
   onDeleteComment(id: string): void {
-    if (!confirm('¿Eliminar comentario?')) return;
-
-    this.commentsService.delete(id).subscribe(() => {
-      this.loadComments(this.post._id);
+    this.commentsService.delete(id).subscribe({
+      next: () => {
+        this.toast.show('Comentario eliminado', 'success');
+        this.loadComments(this.post._id);
+      },
+      error: () => {
+        this.toast.show('No se pudo eliminar el comentario', 'error');
+      }
     });
   }
 
+  deletePost(): void {
+    this.showDeleteModal = true;
+  }
+
+  confirmDelete(): void {
+    this.postsService.delete(this.post._id).subscribe({
+      next: () => {
+        this.toast.show('Post eliminado correctamente', 'success');
+        this.showDeleteModal = false;
+        this.goBack();
+      },
+      error: () => {
+        this.toast.show('No se pudo eliminar el post', 'error');
+        this.showDeleteModal = false;
+      }
+    });
+  }
+
+  cancelDelete(): void {
+    this.showDeleteModal = false;
+  }
+
+  goBack(): void {
+    history.back();
+  }
 
 }

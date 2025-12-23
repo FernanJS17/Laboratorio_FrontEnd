@@ -1,7 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 import { ApiService } from '../../../core/services/api.service';
 import { Observable, throwError } from 'rxjs';
-import { tap, catchError, delay, map } from 'rxjs/operators';
+import { tap, catchError, delay, map, scan, retryWhen } from 'rxjs/operators';
 import { Post } from '../models/posts.model';
 import { ApiResponse } from '../../../core/utils/api-response';
 
@@ -17,32 +17,50 @@ export class PostsService {
 
   constructor(private api: ApiService) {}
 
-  getAll(page = 1, limit = 5): Observable<void> {
-    this.loading.set(true);
+    getAll(page = 1, limit = 5): Observable<void> {
+      this.loading.set(true);
 
-    return this.api
-      .get<{
-        items: Post[];
-        total: number;
-        page: number;
-        limit: number;
-        totalPages: number;
-      }>('/posts', { page, limit })
-      .pipe(
-        delay(400),
-        tap(res => {
-          this.posts.set(res.items);
-          this.total.set(res.total);
-          this.totalPages.set(res.totalPages);
-          this.loading.set(false);
-        }),
-        map(() => void 0),
-        catchError(err => {
-          this.loading.set(false);
-          throw err;
-        })
-      );
-  }
+      return this.api
+        .get<{
+          items: Post[];
+          total: number;
+          page: number;
+          limit: number;
+          totalPages: number;
+        }>('/posts', { page, limit })
+        .pipe(
+          delay(400),
+
+          //PRONTO OBSOLETO...
+          retryWhen(errors =>
+            errors.pipe(
+              scan((count, err) => {
+                if (count >= 2) throw err; // máximo 3 intentos
+                return count + 1;
+              }, 0),
+              delay(1000)
+            )
+          ),
+
+          tap(res => {
+            this.posts.set(res.items);
+            this.total.set(res.total);
+            this.totalPages.set(res.totalPages);
+          }),
+
+          map(() => void 0),
+
+          catchError(err => {
+            return throwError(() => err);
+          }),
+
+          // siempre se ejecutaa con tap
+          tap({
+            finalize: () => this.loading.set(false)
+          })
+        );
+    }
+
 
 
 
@@ -61,9 +79,22 @@ export class PostsService {
   }
 
   bulkCreate(posts: Partial<Post>[]): Observable<Post[]> {
-    return this.api.post<ApiResponse<Post[]>>('/posts/bulk', { posts })
-      .pipe(map(res => res.data));
+    return this.api
+      .post<ApiResponse<Post[]>>('/posts/bulk', { posts })
+      .pipe(
+        retryWhen(errors =>
+          errors.pipe(
+            scan((count, err) => {
+              if (count >= 1) throw err; // Maximo de 1 intento
+              return count + 1;
+            }, 0),
+            delay(1500)
+          )
+        ),
+        map(res => res.data)
+      );
   }
+
 
   update(id: string, data: Partial<Post>): Observable<Post> {
     return this.api
