@@ -1,0 +1,47 @@
+<div class="min-h-screen bg-gray-100 flex items-center justify-center px-4">
+  <div class="w-full max-w-4xl grid md:grid-cols-2 gap-8 items-center">
+
+    <!-- LEFT -->
+    <div class="hidden md:block">
+      <h1 class="text-4xl font-bold text-blue-600">
+        Conecta con ideas y personas
+      </h1>
+      <p class="text-xl text-gray-600 mt-4">
+        Una plataforma simple para compartir pensamientos.
+      </p>
+    </div>
+
+    <!-- CARD -->
+    <div class="bg-white p-6 rounded-xl shadow-lg w-full max-w-sm mx-auto">
+      <form [formGroup]="form" (ngSubmit)="login()" class="space-y-4">
+
+        <input
+          type="email"
+          placeholder="Correo electrónico (Cualquiera)"
+          class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          formControlName="email"
+        />
+
+        <input
+          type="password"
+          placeholder="Contraseña (Cualquiera)"
+          class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          formControlName="password"
+        />
+
+        <button
+          type="submit"
+          [disabled]="form.invalid"
+          class="w-full py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 disabled:opacity-50"
+        >
+          Iniciar sesión
+        </button>
+
+        <div class="text-center text-sm text-gray-500">
+          Login simulado con JWT
+        </div>
+      </form>
+    </div>
+
+  </div>
+</div>

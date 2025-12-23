@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {  ReactiveFormsModule } from '@angular/forms';
 
 import { SharedModule } from '../../shared/shared.module';
 
@@ -12,6 +12,7 @@ import { CommentItemComponent } from './components/comment-item/comment-item.com
 import { RouterModule } from '@angular/router';
 import { CommentFormComponent } from './components/comment-form/comment-form.component';
 import { PostsBulkPageComponent } from './pages/post-bulk/post-bulk.page';
+import { LoginPageComponent } from './pages/login/login.page.component';
 
 @NgModule({
   declarations: [
@@ -22,6 +23,7 @@ import { PostsBulkPageComponent } from './pages/post-bulk/post-bulk.page';
     CommentItemComponent,
     CommentFormComponent,
     PostsBulkPageComponent,
+    LoginPageComponent,
   ],
   imports: [
     CommonModule,
