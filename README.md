@@ -1,27 +1,85 @@
 # LaboratorioFrontEnd
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.2.21.
+Este es el FrontEnd del proyecto de Laboratorio. Es una app para manejar posts, comentarios y carga masiva de datos, con autenticación simple usando JWT.
 
-## Development server
+-Tecnologías
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+---
+Angular V18.2.21
+Node.js v20.19.6
+---
+TypeScript
 
-## Code scaffolding
+RxJS
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+TailwindCSS para estilos
 
-## Build
+JWT para autenticación básica
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+Node / API (se asume que ya está corriendo el backend)
 
-## Running unit tests
+-Instalación
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+Clona el repositorio:
 
-## Running end-to-end tests
+git clone https://github.com/FernanJS17/Laboratorio_FrontEnd.git
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
 
-## Further help
+Entra en la carpeta del proyecto:
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+cd Laboratorio_FrontEnd
+
+
+Instala las dependencias:
+
+npm install
+
+
+Levanta la app:
+
+ng serve
+
+
+Abre el navegador en:
+
+http://localhost:4200
+
+- Funcionalidades principales
+
+Listado de posts: ver todos los posts con paginación y búsqueda.
+
+Detalle de post: ver el contenido completo y comentarios.
+
+Crear / Editar posts: formularios con validaciones.
+
+Eliminar posts y comentarios con modal de confirmación.
+
+Carga masiva de posts: generar y cargar muchos posts de prueba.
+
+Autenticación simple: login con JWT.
+
+UI moderna: con botones, modales, toast y skeletons, estilos basadoss en la interfaz de Facebook y Reddit.
+
+- Uso
+
+Inicia sesión en la pantalla de login para acceder a la app.
+
+Puedes crear nuevos posts, editarlos o eliminarlos.
+
+Carga posts masivos usando la sección de “Carga masiva”.
+
+Los toasts muestran mensajes de éxito o error en cada acción.
+
+Skeletons indican cuando la app está cargando datos.
+
+-Notas
+
+El proyecto requiere que el backend esté corriendo para funcionar correctamente.
+
+Los posts y comentarios se manejan con un backend simulado o real con endpoints REST.
+
+La autenticación JWT es simple, no hay registro de usuarios, solo login básico.
+
+Se puede personalizar la cantidad de posts en la carga masiva cambiando el generador de datos.
+
+-GitHub: FernanJS17
